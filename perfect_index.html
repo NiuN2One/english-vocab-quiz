@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>27考研核心词汇测验中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        [v-cloak] { display: none; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); }
+        .dopamine-1 { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
+        .dopamine-2 { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+        .dopamine-3 { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+        .dopamine-4 { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+        .text-dopamine-1 { color: #065f46; }
+        .text-dopamine-2 { color: #92400e; }
+        .text-dopamine-3 { color: #9f1239; }
+        .text-dopamine-4 { color: #1e40af; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .flash-correct { animation: flashGreen 0.4s ease; }
+        .flash-wrong { animation: flashRed 0.4s ease; }
+        @keyframes flashGreen {
+            0%, 100% { background-color: white; }
+            50% { background-color: #dcfce7; }
+        }
+        @keyframes flashRed {
+            0%, 100% { background-color: white; }
+            50% { background-color: #fee2e2; }
+        }
+        .context-blank {
+            border-bottom: 2px solid #1E40AF;
+            padding: 0 8px;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: #1E40AF;
+        }
+        .next-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .next-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        .next-button:hover::before {
+            left: 100%;
+        }
+        .next-button:hover {
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+        }
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+        }
+        .recording-pulse {
+            animation: ripple 1.5s infinite;
+        }
+        @keyframes starBurst {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        .star-burst {
+            animation: starBurst 0.6s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+        .float-star {
+            animation: floatUp 1s ease-out forwards;
+        }
+        /* Glassmorphism Effect */
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        .rating-s {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .rating-a {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .rating-b {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+        .wrong-word-item {
+            transition: all 0.2s ease;
+        }
+        .wrong-word-item:hover {
+            transform: translateX(5px);
+            background: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
+    <div id="app" v-cloak>
+        <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+            <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#1E40AF] to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm sm:text-lg">牛</div>
+                    <h1 class="text-base sm:text-lg font-bold text-gray-800">27考研核心词汇测验中心</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="hidden sm:flex flex-col items-end">
+                        <span class="text-xs text-gray-500">{{ masteredCount }}/{{ totalWords }} 已掌握</span>
+                        <span class="text-[10px] text-[#1E40AF]">离上岸又近了一步！</span>
+                    </div>
+                    <button @click="showSettings = true" class="p-1.5 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="pt-14 sm:pt-16 pb-8 min-h-screen">
+            <transition name="fade" mode="out-in">
+                <!-- 首页 -->
+                <div v-if="currentPage === 'home'" key="home" class="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">准研究生同学，今天要攻克哪个单元？</h2>
+                        <p class="text-xs sm:text-sm text-gray-500">每单元100词 · 共21单元 · 2113核心词汇</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+                        <button v-for="unit in units" :key="unit.number" @click="openUnitModal(unit)"
+                            :class="['card-hover rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center group transition-all duration-300', getUnitColorClass(unit.number)]"
+                            :style="{ boxShadow: '0 4px 15px ' + getUnitShadow(unit.number) }">
+                            <div :class="['text-lg sm:text-xl font-bold', getUnitTextColor(unit.number)]">Unit {{ unit.number }}</div>
+                            <div :class="['text-xs mt-1', getUnitTextColor(unit.number), 'opacity-70']">{{ unit.words.length }} 词</div>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 sm:mt-8 bg-white/80 backdrop-blur rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between text-xs text-gray-500 mb-2">
+                            <span>总体进度</span>
+                            <span>{{ masteredCount }}/{{ totalWords }}</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-[#1E40AF] to-blue-600 transition-all" :style="{width: overallProgress + '%'}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 答题页 -->
+                <div v-else-if="currentPage === 'quiz'" key="quiz" class="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <button @click="confirmExit" class="flex items-center gap-2 text-gray-600 hover:text-[#1E40AF]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            退出
+                        </button>
+                        <div class="text-sm text-gray-500">{{ currentIndex + 1 }}/{{ currentUnitWords.length }}</div>
+                    </div>
+
+                    <div class="mb-4 bg-white/80 backdrop-blur rounded-xl p-3 shadow-sm">
+                        <div class="flex justify-between text-xs text-gray-500 mb-2">
+                            <span>当前进度</span>
+                            <span>{{ currentProgress }}%</span>
+                        </div>
+                        <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-[#1E40AF] to-blue-600 transition-all" :style="{width: currentProgress + '%'}"></div>
+                        </div>
+                    </div>
+
+                    <div v-if="currentWord" :class="'bg-white rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8 mb-4 sm:mb-6 ' + feedbackClass">
+                        <!-- Mode 1: 英选词义 -->
+                        <div v-if="quizMode === 'en-to-cn'">
+                            <div class="text-center mb-6 sm:mb-8">
+                                <div class="flex items-center justify-center gap-3 mb-3">
+                                    <div class="text-3xl sm:text-4xl font-bold text-gray-800">{{ currentWord.word }}</div>
+                                    <button @click="speakWord" class="p-2 hover:bg-gray-100 rounded-full">
+                                        <svg class="w-6 h-6 text-[#1E40AF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                <button v-for="option in currentOptions" :key="option" @click="selectOption(option)"
+                                    :class="['w-full p-3 sm:p-4 rounded-xl text-left transition-all', answered && option === currentWord.definition ? 'bg-green-100 text-green-800' : 'bg-gray-50 hover:bg-gray-100 text-gray-700']">
+                                    <span class="text-sm sm:text-base">{{ option }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mode 2: 中选英（四选一） -->
+                        <div v-else-if="quizMode === 'cn-to-en'">
+                            <div class="text-center mb-6 sm:mb-8">
+                                <div class="text-xl sm:text-2xl text-gray-700 mb-4">{{ currentWord.definition }}</div>
+                                <div class="text-sm text-gray-400">请选择正确的英文单词</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <button v-for="option in currentOptions" :key="option" @click="selectOption(option)"
+                                    :class="['w-full p-3 sm:p-4 rounded-xl text-center transition-all', answered && option === currentWord.word ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-50 hover:bg-gray-100 text-gray-700']">
+                                    <span class="text-sm sm:text-base">{{ option }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mode 3: 语境选词 -->
+                        <div v-else-if="quizMode === 'context'">
+                            <div class="text-center mb-6 sm:mb-8">
+                                <div class="text-base sm:text-lg text-gray-600 leading-relaxed p-4 sm:p-6 bg-blue-50 rounded-2xl break-words">
+                                    <span v-html="getContextWithBlank()"></span>
+                                </div>
+                                <div v-if="answered && currentWord.context_translation" class="text-sm text-gray-500 mt-3 italic">
+                                    {{ currentWord.context_translation }}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <button v-for="option in currentOptions" :key="option" @click="selectOption(option)"
+                                    :disabled="answered"
+                                    :class="[
+                                        'w-full p-3 sm:p-4 rounded-xl text-center transition-all',
+                                        answered ? 'cursor-default' : 'hover:bg-gray-100',
+                                        answered && option === currentWord.word ? 'bg-green-100 text-green-800 font-semibold border-2 border-green-500' :
+                                        answered && selectedOption === option && !isCorrect ? 'bg-red-100 text-red-800 border-2 border-red-500' :
+                                        'bg-gray-50 text-gray-700'
+                                    ]">
+                                    <span class="text-sm sm:text-base">{{ option }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="answered" class="text-center">
+                        <!-- 语音纠音挑战 -->
+                        <div v-if="showPronunciationChallenge">
+                            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 mb-4">
+                                <div class="flex items-center justify-center gap-2 mb-4">
+                                    <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                    </svg>
+                                    <h3 class="text-lg font-bold text-gray-800">语音纠音挑战</h3>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-4">请朗读单词: <span class="font-bold text-purple-600">{{ currentWord.word }}</span></p>
+
+                                <!-- 星星特效容器 -->
+                                <div class="relative h-20 mb-4 overflow-visible">
+                                    <div v-for="star in stars" :key="star.id"
+                                        class="absolute star-burst"
+                                        :style="{ left: star.left + '%', animationDelay: star.delay + 'ms' }">
+                                        <svg class="w-12 h-12 float-star" :style="{ color: star.color }" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- 反馈信息 -->
+                                <div v-if="pronunciationFeedback" class="mb-4">
+                                    <div :class="[
+                                        'text-lg font-bold py-3 px-4 rounded-xl',
+                                        pronunciationSuccess ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                    ]">
+                                        {{ pronunciationFeedback }}
+                                    </div>
+                                </div>
+
+                                <!-- 录音按钮 -->
+                                <div class="flex items-center justify-center gap-3">
+                                    <button v-if="!pronunciationSuccess"
+                                        @click="startRecording"
+                                        :disabled="isRecording"
+                                        :class="[
+                                            'relative inline-flex items-center justify-center gap-2 py-4 px-8 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300',
+                                            isRecording
+                                                ? 'bg-gradient-to-r from-red-400 to-pink-500 text-white recording-pulse'
+                                                : 'bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 text-white hover:shadow-xl hover:scale-105 active:scale-95'
+                                        ]">
+                                        <svg v-if="!isRecording" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                        </svg>
+                                        <svg v-else class="w-6 h-6 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="6"/>
+                                        </svg>
+                                        <span>{{ isRecording ? '录音中...' : '开始录音' }}</span>
+                                    </button>
+
+                                    <button @click="skipPronunciationChallenge"
+                                        class="py-4 px-6 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all">
+                                        跳过
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 原来的下一题按钮（当不显示语音挑战时） -->
+                        <button v-else @click="nextWord" class="next-button flex-1 inline-flex items-center justify-center gap-2 py-4 px-8 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 text-white rounded-2xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                            <span>下一题</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 报告页 -->
+                <div v-else-if="currentPage === 'report'" key="report" class="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+                    <button @click="goHome" class="mb-4 flex items-center gap-2 text-gray-600 hover:text-[#1E40AF]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        返回首页
+                    </button>
+
+                    <div class="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 text-center">
+                        <div class="text-5xl sm:text-6xl mb-4">📊</div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">准研究生同学，Unit {{ selectedUnit.number }} 学习报告</h2>
+                        <p class="text-gray-500 mb-6">{{ getModeName(quizMode) }}</p>
+
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="text-2xl sm:text-3xl font-bold text-[#1E40AF]">{{ correctCount }}</div>
+                                <div class="text-xs text-gray-500">答对</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="text-2xl sm:text-3xl font-bold text-red-500">{{ wrongCount }}</div>
+                                <div class="text-xs text-gray-500">答错</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="text-2xl sm:text-3xl font-bold text-green-600">{{ accuracy }}%</div>
+                                <div class="text-xs text-gray-500">正确率</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button v-if="wrongWords.length > 0" @click="retryWrong" class="flex-1 py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 text-sm sm:text-base">重练错题</button>
+                            <button @click="restartUnit" class="flex-1 py-3 bg-gradient-to-r from-[#1E40AF] to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg text-sm sm:text-base">再测一次</button>
+                        </div>
+                        <button @click="goHome" class="w-full mt-3 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 text-sm sm:text-base">返回首页</button>
+                    </div>
+                </div>
+            </transition>
+        </main>
+
+        <!-- Unit Selection Modal -->
+        <transition name="fade">
+            <div v-if="showUnitModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full max-h-[80vh] overflow-y-auto">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">准研究生同学，Unit {{ selectedUnit.number }}</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mb-6">{{ selectedUnit.words.length }} 个单词 · 选择测试模式</p>
+
+                    <div class="space-y-3">
+                        <button @click="startQuiz('en-to-cn')" class="w-full bg-gradient-to-r from-[#1E40AF] to-blue-600 text-white rounded-xl p-4 text-left hover:shadow-lg transition-all">
+                            <div class="font-semibold text-base sm:text-lg mb-1">模式一：英选词义</div>
+                            <div class="text-xs sm:text-sm opacity-90">听读识别 · 看英文选中文释义</div>
+                        </button>
+
+                        <button @click="startQuiz('cn-to-en')" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-4 text-left hover:shadow-lg transition-all">
+                            <div class="font-semibold text-base sm:text-lg mb-1">模式二：中选单词</div>
+                            <div class="text-xs sm:text-sm opacity-90">反向测试 · 看中文选英文单词</div>
+                        </button>
+
+                        <button @click="startQuiz('context')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl p-4 text-left hover:shadow-lg transition-all relative">
+                            <div class="font-semibold text-base sm:text-lg mb-1">模式三：语境选词</div>
+                            <div class="text-xs sm:text-sm opacity-90">实战应用 · 根据句子选单词</div>
+                            <div class="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-1 rounded-full">{{ selectedUnit.words.filter(w => w.context).length }} 题</div>
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <button @click="exportToPDF(units.indexOf(selectedUnit))" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl font-bold text-base sm:text-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+                            <span class="text-2xl">📄</span>
+                            <span>下载本单元 PDF 纸质补漏包</span>
+                        </button>
+                        <p class="text-xs text-gray-400 text-center mt-2">包含 {{ selectedUnit.words.length }} 个单词 · 双栏布局 · 可打印</p>
+                    </div>
+
+                    <button @click="showUnitModal = false" class="w-full mt-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300">取消</button>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Settings Modal -->
+        <transition name="fade">
+            <div v-if="showSettings" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Hi, 准研究生同学</h2>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <div class="font-medium text-gray-800">学习进度</div>
+                            <div class="text-sm text-gray-500">已掌握 {{ masteredCount }}/{{ totalWords }} 个单词</div>
+                        </div>
+                        <button @click="clearProgress" class="w-full py-3 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600">清空进度</button>
+                    </div>
+                    <button @click="showSettings = false" class="w-full mt-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300">关闭</button>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Custom Confirm Modal -->
+        <transition name="fade">
+            <div v-if="showConfirmModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+                    <h2 class="text-lg font-bold text-[#1E40AF] mb-3">Hi, 准研究生同学：</h2>
+                    <p class="text-sm text-gray-700 mb-6 leading-relaxed">{{ confirmModalMessage }}</p>
+                    <div class="flex gap-3">
+                        <button @click="showConfirmModal = false" class="flex-1 py-2.5 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 text-sm">取消</button>
+                        <button @click="handleConfirm" class="flex-1 py-2.5 bg-gradient-to-r from-[#1E40AF] to-blue-600 text-white rounded-xl font-medium hover:opacity-90 text-sm">确定</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Unit Summary Modal -->
+        <transition name="fade">
+            <div v-if="showSummaryModal" class="fixed inset-0 bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="glassmorphism rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <!-- Rating Section -->
+                    <div class="text-center mb-6">
+                        <div class="text-6xl sm:text-7xl font-bold mb-2" :class="getRatingClass()">{{ currentUnitRating }}</div>
+                        <div class="text-xl sm:text-2xl font-bold text-gray-800">{{ getRatingText() }}</div>
+                        <div class="text-sm text-gray-500 mt-1">Unit {{ selectedUnit?.number }} · {{ getModeName(quizMode) }}</div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        <div class="bg-white/60 rounded-xl p-4 text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-green-600">{{ correctCount }}</div>
+                            <div class="text-xs text-gray-600 mt-1">答对</div>
+                        </div>
+                        <div class="bg-white/60 rounded-xl p-4 text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-red-500">{{ wrongCount }}</div>
+                            <div class="text-xs text-gray-600 mt-1">答错</div>
+                        </div>
+                        <div class="bg-white/60 rounded-xl p-4 text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-blue-600">{{ accuracy }}%</div>
+                            <div class="text-xs text-gray-600 mt-1">正确率</div>
+                        </div>
+                        <div class="bg-white/60 rounded-xl p-4 text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-purple-600">{{ formatTime(unitTotalTime / 1000) }}</div>
+                            <div class="text-xs text-gray-600 mt-1">总用时</div>
+                        </div>
+                    </div>
+
+                    <!-- Pronunciation Stats -->
+                    <div v-if="pronunciationAttempts > 0" class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">口语挑战成功率</div>
+                                    <div class="text-sm text-gray-600">{{ pronunciationAttempts }} 次尝试</div>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-purple-600">
+                                {{ pronunciationAttempts > 0 ? Math.round((pronunciationSuccesses / pronunciationAttempts) * 100) : 0 }}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wrong Words Review -->
+                    <div v-if="wrongWords.length > 0" class="mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <h3 class="text-lg font-bold text-gray-800">错题回顾</h3>
+                        </div>
+                        <div class="space-y-2 max-h-40 overflow-y-auto">
+                            <div v-for="word in wrongWords" :key="word.word"
+                                @click="speakWordInSummary(word.word)"
+                                class="wrong-word-item flex items-center justify-between p-3 bg-white/60 rounded-xl cursor-pointer">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-800">{{ word.word }}</div>
+                                        <div class="text-xs text-gray-600">{{ word.definition }}</div>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inspirational Quote -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6 text-center">
+                        <div class="shimmer-text text-lg font-bold">
+                            {{ inspirationalQuote }}
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <button v-if="wrongCount > 0" @click="retryUnit" class="flex-1 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:shadow-lg transition-all">
+                            重练错题
+                        </button>
+                        <button @click="retryUnit" class="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold hover:shadow-lg transition-all">
+                            再测一次
+                        </button>
+                        <button @click="closeSummaryModal" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-all">
+                            返回首页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    units: [],
+                    allWords: [],
+                    currentPage: "home",
+                    selectedUnit: null,
+                    quizMode: null,
+                    currentUnitWords: [],
+                    currentIndex: 0,
+                    currentWord: null,
+                    currentOptions: [],
+                    answered: false,
+                    isCorrect: false,
+                    feedbackClass: "",
+                    selectedOption: null,
+                    mastered: new Set(),
+                    showSettings: false,
+                    showUnitModal: false,
+                    showConfirmModal: false,
+                    confirmModalTitle: "",
+                    confirmModalMessage: "",
+                    confirmModalCallback: null,
+                    correctCount: 0,
+                    wrongCount: 0,
+                    wrongWords: [],
+                    // AI语音纠音
+                    showPronunciationChallenge: false,
+                    isRecording: false,
+                    recognitionResult: '',
+                    pronunciationFeedback: '',
+                    pronunciationSuccess: false,
+                    stars: [],
+                    // 单元测验总结报告
+                    showSummaryModal: false,
+                    unitStartTime: null,
+                    unitEndTime: null,
+                    unitTotalTime: 0,
+                    pronunciationAttempts: 0,
+                    pronunciationSuccesses: 0,
+                    currentUnitRating: '',
+                    inspirationalQuote: ''
+                }
+            },
+            computed: {
+                totalWords() { return this.allWords.length; },
+                masteredCount() { return this.mastered.size; },
+                overallProgress() { return this.totalWords > 0 ? Math.round((this.masteredCount / this.totalWords) * 100) : 0; },
+                currentProgress() { return this.currentUnitWords.length > 0 ? Math.round(((this.currentIndex + 1) / this.currentUnitWords.length) * 100) : 0; },
+                accuracy() { return this.totalAnswered > 0 ? Math.round((this.correctCount / this.totalAnswered) * 100) : 0; },
+                totalAnswered() { return this.correctCount + this.wrongCount; }
+            },
+            methods: {
+                loadProgress() {
+                    const s = localStorage.getItem("niuniu_mastered");
+                    if (s) this.mastered = new Set(JSON.parse(s));
+                },
+                saveProgress() {
+                    localStorage.setItem("niuniu_mastered", JSON.stringify([...this.mastered]));
+                },
+                openUnitModal(unit) {
+                    this.selectedUnit = unit;
+                    this.showUnitModal = true;
+                },
+                startQuiz(mode) {
+                    this.quizMode = mode;
+                    this.showUnitModal = false;
+                    this.currentPage = "quiz";
+                    // 初始化单元测验追踪数据
+                    this.unitStartTime = Date.now();
+                    this.pronunciationAttempts = 0;
+                    this.pronunciationSuccesses = 0;
+                    // For context mode, only use words that have context examples
+                    if (mode === 'context') {
+                        const wordsWithContext = this.selectedUnit.words.filter(w => w.context && w.context.length > 0);
+                        if (wordsWithContext.length === 0) {
+                            this.showConfirm("", "该单元暂无语境练习题，请选择其他模式或联系管理员添加。", () => {
+                                this.showUnitModal = true;
+                            });
+                            return;
+                        }
+                        this.currentUnitWords = this.shuffle(wordsWithContext);
+                    } else {
+                        this.currentUnitWords = this.shuffle([...this.selectedUnit.words]);
+                    }
+                    this.currentIndex = 0;
+                    this.correctCount = 0;
+                    this.wrongCount = 0;
+                    this.wrongWords = [];
+                    this.loadQuestion();
+                },
+                loadQuestion() {
+                    if (this.currentIndex >= this.currentUnitWords.length) {
+                        // 单元测试完成，显示总结报告
+                        this.showUnitSummary();
+                        return;
+                    }
+                    this.currentWord = this.currentUnitWords[this.currentIndex];
+                    this.answered = false;
+                    this.isCorrect = false;
+                    this.selectedOption = null;
+                    this.feedbackClass = "";
+                    this.showPronunciationChallenge = false;
+                    this.isRecording = false;
+                    this.recognitionResult = '';
+                    this.pronunciationFeedback = '';
+                    this.pronunciationSuccess = false;
+                    this.stars = [];
+                    this.generateOptions();
+                    this.$nextTick(() => {
+                        if (this.quizMode === "en-to-cn") {
+                            this.speakWord();
+                        }
+                    });
+                },
+                speakWord() {
+                    if ('speechSynthesis' in window && this.currentWord) {
+                        const utterance = new SpeechSynthesisUtterance(this.currentWord.word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.8;
+                        speechSynthesis.speak(utterance);
+                    }
+                },
+                generateOptions() {
+                    if (this.quizMode === 'en-to-cn') {
+                        const options = [this.currentWord.definition];
+                        const otherDefs = this.allWords.filter(w => w.word !== this.currentWord.word).map(w => w.definition);
+                        while (options.length < 4 && otherDefs.length > 0) {
+                            const idx = Math.floor(Math.random() * otherDefs.length);
+                            options.push(otherDefs.splice(idx, 1)[0]);
+                        }
+                        this.currentOptions = this.shuffle(options);
+                    } else if (this.quizMode === 'cn-to-en') {
+                        const options = [this.currentWord.word];
+                        const otherWords = this.allWords.filter(w => w.word !== this.currentWord.word).map(w => w.word);
+                        while (options.length < 4 && otherWords.length > 0) {
+                            const idx = Math.floor(Math.random() * otherWords.length);
+                            options.push(otherWords.splice(idx, 1)[0]);
+                        }
+                        this.currentOptions = this.shuffle(options);
+                    } else if (this.quizMode === 'context') {
+                        const options = [this.currentWord.word];
+                        const otherWords = this.allWords.filter(w => w.word !== this.currentWord.word).map(w => w.word);
+                        while (options.length < 4 && otherWords.length > 0) {
+                            const idx = Math.floor(Math.random() * otherWords.length);
+                            options.push(otherWords.splice(idx, 1)[0]);
+                        }
+                        this.currentOptions = this.shuffle(options);
+                    }
+                },
+                getContextWithBlank() {
+                    if (!this.currentWord || !this.currentWord.context) return '';
+                    if (this.answered) {
+                        // Show the correct answer filled in
+                        const correctWord = this.currentWord.word;
+                        const coloredWord = this.isCorrect
+                            ? `<span class="text-green-600 font-bold">${correctWord}</span>`
+                            : `<span class="text-red-600 font-bold">${correctWord}</span>`;
+                        return this.currentWord.context.replace(new RegExp(this.currentWord.word, 'gi'), coloredWord);
+                    } else {
+                        // Show blank during quiz
+                        return this.currentWord.context.replace(new RegExp(this.currentWord.word, 'gi'), '<span class="context-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                    }
+                },
+                selectOption(option) {
+                    if (this.answered) return;
+                    this.selectedOption = option;
+                    this.answered = true;
+
+                    if (this.quizMode === 'en-to-cn') {
+                        this.isCorrect = option === this.currentWord.definition;
+                    } else if (this.quizMode === 'cn-to-en') {
+                        this.isCorrect = option === this.currentWord.word;
+                    } else if (this.quizMode === 'context') {
+                        this.isCorrect = option === this.currentWord.word;
+                    }
+
+                    this.feedbackClass = this.isCorrect ? 'flash-correct' : 'flash-wrong';
+
+                    if (this.isCorrect) {
+                        this.correctCount++;
+                        this.mastered.add(this.currentWord.word);
+                        this.saveProgress();
+                        // 显示语音纠音挑战（仅在语境模式或英选中模式）
+                        if (this.quizMode === 'context' || this.quizMode === 'en-to-cn') {
+                            this.showPronunciationChallenge = true;
+                        } else {
+                            setTimeout(() => this.nextWord(), 1500);
+                        }
+                    } else {
+                        this.wrongCount++;
+                        this.wrongWords.push(this.currentWord);
+                        setTimeout(() => this.nextWord(), 1500);
+                    }
+                },
+                nextWord() {
+                    this.currentIndex++;
+                    this.loadQuestion();
+                },
+                retryWrong() {
+                    if (this.wrongWords.length === 0) return;
+                    this.currentUnitWords = [...this.wrongWords];
+                    this.currentIndex = 0;
+                    this.correctCount = 0;
+                    this.wrongCount = 0;
+                    this.wrongWords = [];
+                    this.currentPage = "quiz";
+                    this.loadQuestion();
+                },
+                restartUnit() {
+                    this.startQuiz(this.quizMode);
+                },
+                goHome() {
+                    this.currentPage = "home";
+                    this.selectedUnit = null;
+                    this.quizMode = null;
+                },
+                confirmExit() {
+                    this.showConfirm("", "确定要退出当前测试吗？进度将不会保存。", () => {
+                        this.goHome();
+                    });
+                },
+                getModeName(mode) {
+                    const modeNames = {
+                        "en-to-cn": "英选词义",
+                        "cn-to-en": "中选单词",
+                        "context": "语境选词"
+                    };
+                    return modeNames[mode] || mode;
+                },
+                getUnitColorClass(unitNum) {
+                    const colors = ["dopamine-1", "dopamine-2", "dopamine-3", "dopamine-4"];
+                    return colors[(unitNum - 1) % 4];
+                },
+                getUnitTextColor(unitNum) {
+                    const colors = ["text-dopamine-1", "text-dopamine-2", "text-dopamine-3", "text-dopamine-4"];
+                    return colors[(unitNum - 1) % 4];
+                },
+                getUnitShadow(unitNum) {
+                    const shadows = [
+                        "rgba(16, 185, 129, 0.25)",
+                        "rgba(245, 158, 11, 0.25)",
+                        "rgba(236, 72, 153, 0.25)",
+                        "rgba(59, 130, 246, 0.25)"
+                    ];
+                    return shadows[(unitNum - 1) % 4];
+                },
+                showConfirm(title, message, callback) {
+                    this.confirmModalTitle = title;
+                    this.confirmModalMessage = message;
+                    this.confirmModalCallback = callback;
+                    this.showConfirmModal = true;
+                },
+                handleConfirm() {
+                    this.showConfirmModal = false;
+                    if (this.confirmModalCallback) {
+                        this.confirmModalCallback();
+                        this.confirmModalCallback = null;
+                    }
+                },
+                clearProgress() {
+                    this.showConfirm("", "确定要清空所有学习进度吗？", () => {
+                        this.mastered.clear();
+                        this.saveProgress();
+                        this.showSettings = false;
+                    });
+                },
+                shuffle(array) {
+                    const arr = [...array];
+                    for (let i = arr.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [arr[i], arr[j]] = [arr[j], arr[i]];
+                    }
+                    return arr;
+                },
+                // AI语音纠音功能
+                startPronunciationChallenge() {
+                    this.showPronunciationChallenge = true;
+                    this.recognitionResult = '';
+                    this.pronunciationFeedback = '';
+                    this.pronunciationSuccess = false;
+                    this.stars = [];
+                    this.speakWord();
+                },
+                startRecording() {
+                    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                        this.pronunciationFeedback = '您的浏览器不支持语音识别，请使用Chrome浏览器。';
+                        return;
+                    }
+
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'en-US';
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+
+                    this.isRecording = true;
+                    this.recognition = recognition;
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                        this.recognitionResult = transcript;
+                        this.checkPronunciation(transcript);
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.isRecording = false;
+                        this.pronunciationFeedback = '识别失败，请重试';
+                    };
+
+                    recognition.onend = () => {
+                        this.isRecording = false;
+                    };
+
+                    recognition.start();
+                },
+                checkPronunciation(transcript) {
+                    const targetWord = this.currentWord.word.toLowerCase();
+                    // 移除标点符号和多余空格
+                    const cleanTranscript = transcript.replace(/[.,!?;:]/g, '').trim();
+                    const cleanTarget = targetWord.replace(/[.,!?;:]/g, '').trim();
+
+                    this.pronunciationAttempts++;
+                    if (cleanTranscript === cleanTarget || cleanTranscript.endsWith(cleanTarget)) {
+                        this.pronunciationSuccesses++;
+                        this.pronunciationSuccess = true;
+                        this.pronunciationFeedback = 'Excellent! 🎉';
+                        this.showStars();
+                        setTimeout(() => {
+                            this.nextWord();
+                        }, 2000);
+                    } else {
+                        this.pronunciationSuccess = false;
+                        this.pronunciationFeedback = `Try again! 你说的是: "${transcript}"`;
+                        setTimeout(() => {
+                            this.speakWord();
+                        }, 1000);
+                    }
+                },
+                showStars() {
+                    this.stars = [];
+                    const colors = ['#FFD700', '#FF6B9D', '#4ECDC4', '#A855F7', '#3B82F6'];
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            this.stars.push({
+                                id: Date.now() + i,
+                                color: colors[i % colors.length],
+                                left: Math.random() * 80 + 10,
+                                delay: i * 100
+                            });
+                        }, i * 100);
+                    }
+                },
+                skipPronunciationChallenge() {
+                    this.showPronunciationChallenge = false;
+                    this.nextWord();
+                },
+                // 单元测验总结报告相关方法
+                showUnitSummary() {
+                    this.unitEndTime = Date.now();
+                    this.unitTotalTime = this.unitEndTime - this.unitStartTime;
+                    this.calculateRating();
+                    this.selectInspirationalQuote();
+                    this.showSummaryModal = true;
+                },
+                calculateRating() {
+                    const totalTime = this.unitTotalTime / 1000; // 转换为秒
+                    const avgTimePerQuestion = totalTime / this.currentUnitWords.length;
+                    const accuracy = this.correctCount / (this.correctCount + this.wrongCount);
+
+                    // S级：全对且平均每题 < 3秒
+                    if (this.wrongCount === 0 && avgTimePerQuestion < 3) {
+                        this.currentUnitRating = 'S';
+                    }
+                    // A级：正确率 > 90%
+                    else if (accuracy > 0.9) {
+                        this.currentUnitRating = 'A';
+                    }
+                    // B级：有错题
+                    else {
+                        this.currentUnitRating = 'B';
+                    }
+                },
+                selectInspirationalQuote() {
+                    const quotes = [
+                        '📚 每天进步一点点，上岸就在眼前！',
+                        '💪 坚持就是胜利，准研究生加油！',
+                        '🌟 星光不问赶路人，时光不负有心人！',
+                        '📖 今天的努力，是明天的骄傲！',
+                        '🎯 目标在前，脚步不停，成功在望！',
+                        '🔥 越努力，越幸运！相信自己！',
+                        '🚀 每一个单词都是通往梦想的阶梯！',
+                        '⭐ 你的坚持，终将美好！',
+                        '🌈 风雨过后，必有彩虹！坚持住！',
+                        '📝 知识改变命运，学习成就未来！',
+                        '🎓 研途漫漫，你我同行！加油！',
+                        '💎 点滴积累，终成大器！继续努力！',
+                        '🌻 相信自己，你比想象中更强大！',
+                        '📚 书山有路勤为径，学海无涯苦作舟！',
+                        '🏆 今日的汗水，明日的荣耀！'
+                    ];
+                    this.inspirationalQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                },
+                getRatingClass() {
+                    switch(this.currentUnitRating) {
+                        case 'S': return 'rating-s';
+                        case 'A': return 'rating-a';
+                        case 'B': return 'rating-b';
+                        default: return '';
+                    }
+                },
+                getRatingText() {
+                    switch(this.currentUnitRating) {
+                        case 'S': return 'S级 - 上岸预定 🎉';
+                        case 'A': return 'A级 - 稳步提升 💪';
+                        case 'B': return 'B级 - 再接再厉 📚';
+                        default: return '';
+                    }
+                },
+                formatTime(seconds) {
+                    if (seconds < 60) {
+                        return `${Math.round(seconds)}秒`;
+                    } else {
+                        const mins = Math.floor(seconds / 60);
+                        const secs = Math.round(seconds % 60);
+                        return `${mins}分${secs}秒`;
+                    }
+                },
+                speakWordInSummary(word) {
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.8;
+                        speechSynthesis.speak(utterance);
+                    }
+                },
+                closeSummaryModal() {
+                    this.showSummaryModal = false;
+                    this.currentPage = "home";
+                    this.selectedUnit = null;
+                    this.quizMode = null;
+                },
+                retryUnit() {
+                    this.showSummaryModal = false;
+                    this.startQuiz(this.quizMode);
+                },
+                exportToPDF(unitIndex) {
+                    const unit = this.units[unitIndex];
+                    if (!unit) {
+                        alert('单元数据不存在');
+                        return;
+                    }
+
+                    const printWindow = window.open('', '_blank');
+                    const words = unit.words;
+
+                    function generateTable(wordList) {
+                        let html = '<table style="width:100%;height:100%;table-layout:fixed;border-collapse:collapse;font-size:9pt;-webkit-print-color-adjust: exact;print-color-adjust: exact;">';
+                        html += '<colgroup>';
+                        html += '<col style="width:25%;">';  // 英文
+                        html += '<col style="width:25%;">';  // 英译汉
+                        html += '<col style="width:25%;">';  // 汉译英
+                        html += '<col style="width:25%;">';  // 中文
+                        html += '</colgroup>';
+
+                        // 表头
+                        html += '<thead>';
+                        html += '<tr style="height:2em;border-bottom:2px solid #333;">';
+                        html += '<th style="padding:6px 8px;font-weight:700;vertical-align:middle;text-align:center;font-family:Inter,Arial,sans-serif;font-size:11pt;border-right:0.5px dashed #ccc;color:#222;">英文</th>';
+                        html += '<th style="padding:6px 8px;font-weight:700;vertical-align:middle;text-align:center;font-family:Microsoft YaHei,sans-serif;font-size:11pt;border-right:0.5px dashed #ccc;color:#222;">英译汉</th>';
+                        html += '<th style="padding:6px 8px;font-weight:700;vertical-align:middle;text-align:center;font-family:Microsoft YaHei,sans-serif;font-size:11pt;border-right:0.5px dashed #ccc;color:#222;">汉译英</th>';
+                        html += '<th style="padding:6px 8px;font-weight:700;vertical-align:middle;text-align:center;font-family:Microsoft YaHei,sans-serif;font-size:11pt;color:#222;">中文</th>';
+                        html += '</tr>';
+                        html += '</thead>';
+
+                        // 内容
+                        html += '<tbody>';
+                        for (let i = 0; i < wordList.length; i++) {
+                            const w = wordList[i];
+                            html += '<tr style="height:1.8em;border-bottom:0.3px solid #f0f0f0;">';
+                            html += '<td style="padding:5px 10px;font-weight:600;vertical-align:middle;text-align:center;color:#222;font-family:Inter,Arial,sans-serif;font-size:10pt;border-right:0.5px dashed #ccc;">' + w.word + '</td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;border-right:0.5px dashed #ccc;border-bottom:0.5px dashed #ddd;"></td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;border-right:0.5px dashed #ccc;border-bottom:0.5px dashed #ddd;"></td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;text-align:center;color:#555;font-family:Microsoft YaHei,SimHei,sans-serif;font-size:9pt;">' + w.definition + '</td>';
+                            html += '</tr>';
+                        }
+
+                        // 添加填充行以确保虚线贯穿整页
+                        const minRows = 45; // 确保至少有足够的行撑满页面
+                        for (let i = wordList.length; i < minRows; i++) {
+                            html += '<tr style="height:1.8em;border-bottom:0.3px solid #f0f0f0;">';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;border-right:0.5px dashed #ccc;">&nbsp;</td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;border-right:0.5px dashed #ccc;border-bottom:0.5px dashed #ddd;"></td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;border-right:0.5px dashed #ccc;border-bottom:0.5px dashed #ddd;"></td>';
+                            html += '<td style="padding:5px 10px;vertical-align:middle;">&nbsp;</td>';
+                            html += '</tr>';
+                        }
+
+                        html += '</tbody></table>';
+                        return html;
+                    }
+
+                    var html = '<!DOCTYPE html>\n';
+                    html += '<html>\n';
+                    html += '<head>\n';
+                    html += '    <meta charset="UTF-8">\n';
+                    html += '    <title>Unit ' + unit.number + '</title>\n';
+                    html += '    <style>\n';
+                    html += '        * { margin: 0; padding: 0; box-sizing: border-box; }\n';
+                    html += '        body { font-family: "Microsoft YaHei", SimHei, Arial, sans-serif; font-size: 9pt; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }\n';
+                    html += '        .header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #1E40AF; }\n';
+                    html += '        .title { font-size: 20pt; font-weight: 700; color: #1E40AF; letter-spacing: 1px; font-family:Inter,Arial,sans-serif; }\n';
+                    html += '        .subtitle { font-size: 9pt; color: #666; margin-top: 3px; font-weight: 400; }\n';
+                    html += '        .content { margin: 0; padding: 0; }\n';
+                    html += '        .print-btn { position: fixed; top: 15px; right: 15px; padding: 10px 20px; background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3); z-index: 1000; transition: all 0.3s ease; font-family:Inter,Arial,sans-serif; }\n';
+                    html += '        .print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(30, 64, 175, 0.4); }\n';
+                    html += '        table { border-collapse: collapse; width: 100%; height: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }\n';
+                    html += '        @media print {\n';
+                    html += '            @page { size: A4; margin: 1cm 0.9cm; }\n';
+                    html += '            body { margin: 0; padding: 0; }\n';
+                    html += '            .print-btn { display: none !important; }\n';
+                    html += '            .header { margin-bottom: 8px; }\n';
+                    html += '            .content { height: 100%; }\n';
+                    html += '            tr { page-break-inside: avoid; }\n';
+                    html += '            td, th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }\n';
+                    html += '        }\n';
+                    html += '    </style>\n';
+                    html += '</head>\n';
+                    html += '<body>\n';
+                    html += '    <div class="header">\n';
+                    html += '        <div class="title">Unit ' + unit.number + '</div>\n';
+                    html += '        <div class="subtitle">27考研核心词汇 · ' + unit.words.length + '词</div>\n';
+                    html += '    </div>\n';
+                    html += '    <div class="content">' + generateTable(words) + '</div>\n';
+                    html += '    <button class="print-btn" onclick="window.print();setTimeout(function(){window.close();},500);">📄 打印/PDF</button>\n';
+                    html += '</body>\n';
+                    html += '</html>';
+
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+
+                    printWindow.onafterprint = function() {
+                        printWindow.close();
+                    };
+                }
+            },
+            mounted() {
+                this.allWords = remoteData.all;
+                this.units = remoteData.units.map((unit, index) => {
+                    if (index === 20) {
+                        const unit21 = remoteData.units[20];
+                        const unit22 = remoteData.units[21];
+                        return {
+                            number: 21,
+                            words: [...unit21.words, ...(unit22 ? unit22.words : [])]
+                        };
+                    }
+                    if (index === 21) return null;
+                    return unit;
+                }).filter(u => u !== null);
+                this.loadProgress();
+            }
+        }).mount("#app");
+    </script>
+</body>
+</html>
